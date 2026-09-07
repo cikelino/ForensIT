@@ -1,14 +1,17 @@
 :root {
-  --bg: #f5f6f4;
+  --navy: #0c2d6e;
+  --navy-deep: #081f4d;
+  --navy-wash: #eef1f8;
+  --bg: #f6f7f9;
   --surface: #ffffff;
-  --text: #1c231f;
-  --text-muted: #5c655e;
-  --border: #d8dcd6;
-  --accent: #2f6f5e;
-  --accent-contrast: #ffffff;
+  --border: #e2e4ea;
+  --text: #14161a;
+  --text-muted: #6b7280;
   --danger: #a3402f;
-  --slot-free: #ffffff;
-  --slot-taken: #ececea;
+  --danger-wash: #f7ece9;
+  --success-wash: #eaf1ec;
+  --success-text: #2f5d40;
+  --radius: 10px;
 }
 
 * {
@@ -21,25 +24,216 @@ body {
   color: var(--text);
   font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 32px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.site-logo {
+  height: 34px;
+  width: auto;
+}
+
+.site-header-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  border-left: 1px solid var(--border);
+  padding-left: 14px;
+}
+
+.site-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.site-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
 }
 
 main {
-  max-width: 760px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: 40px 20px 80px;
+  padding: 40px 24px 80px;
 }
 
 h1 {
-  font-size: 24px;
-  font-weight: 600;
-  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  margin: 0 0 6px;
 }
 
 .subtitle {
   color: var(--text-muted);
   margin: 0 0 32px;
   font-size: 15px;
+  max-width: 60ch;
 }
+
+/* Layout a due colonne: calendario + riepilogo */
+
+.booking-layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+
+@media (max-width: 780px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.summary-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.panel-heading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 16px;
+}
+
+.day-block {
+  margin-bottom: 20px;
+}
+
+.day-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  text-transform: capitalize;
+}
+
+.day-block .slot-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Selettore giorni: fila di pillole orizzontali */
+
+.day-selector {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+  scrollbar-width: thin;
+}
+
+.day-pill {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 10px 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  cursor: pointer;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.day-pill .day-name {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.day-pill.active {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.day-pill.active .day-name {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.day-pill:hover:not(.active) {
+  border-color: var(--navy);
+}
+
+/* Griglia orari */
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.slot-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 13px 4px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--text);
+  transition: border-color 0.12s ease, background 0.12s ease, color 0.12s ease;
+}
+
+.slot-btn:hover:not(:disabled) {
+  border-color: var(--navy);
+}
+
+.slot-btn.selected {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.slot-btn:disabled {
+  background: var(--bg);
+  color: #b6b9c0;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+/* Riepilogo selezione */
+
+.selection-summary {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: var(--navy-wash);
+  font-size: 14px;
+}
+
+.selection-summary .empty {
+  color: var(--text-muted);
+}
+
+.selection-summary strong {
+  display: block;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+
+/* Form */
 
 .field {
   display: flex;
@@ -56,7 +250,7 @@ h1 {
 .field input,
 .field textarea {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 10px 12px;
   font-size: 15px;
   background: var(--surface);
@@ -65,10 +259,65 @@ h1 {
   resize: vertical;
 }
 
-.info-box {
+.field input:focus,
+.field textarea:focus {
+  outline: none;
+  border-color: var(--navy);
+}
+
+.submit-btn {
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 13px 20px;
+  font-size: 15px;
+  font-weight: 550;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 8px;
+  transition: background 0.12s ease;
+}
+
+.submit-btn:hover:not(:disabled) {
+  background: var(--navy-deep);
+}
+
+.submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.message {
+  margin-top: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.message.success {
+  background: var(--success-wash);
+  color: var(--success-text);
+}
+
+.message.error {
+  background: var(--danger-wash);
+  color: var(--danger);
+}
+
+/* Pagina /respond */
+
+.card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.info-box {
+  background: var(--navy-wash);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 14px 16px;
   margin-bottom: 20px;
   font-size: 14px;
@@ -79,112 +328,16 @@ h1 {
   margin-bottom: 4px;
 }
 
-.link-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 0;
-  text-decoration: underline;
-  margin-top: 12px;
-}
-
-.day-block {
-  margin-bottom: 24px;
-}
-
-.day-label {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 8px;
-  text-transform: capitalize;
-}
-
-.slot-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-}
-
-.slot-btn {
-  border: 1px solid var(--border);
-  background: var(--slot-free);
-  border-radius: 6px;
-  padding: 10px 4px;
-  font-size: 14px;
-  cursor: pointer;
-  color: var(--text);
-}
-
-.slot-btn:hover:not(:disabled) {
-  border-color: var(--accent);
-}
-
-.slot-btn.selected {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border-color: var(--accent);
-}
-
-.slot-btn:disabled {
-  background: var(--slot-taken);
-  color: var(--text-muted);
-  cursor: not-allowed;
-  text-decoration: line-through;
-}
-
-.submit-btn {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border: none;
-  border-radius: 6px;
-  padding: 12px 20px;
-  font-size: 15px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 8px;
-}
-
-.submit-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.message {
-  margin-top: 16px;
-  padding: 12px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.message.success {
-  background: #e5f0ec;
-  color: var(--accent);
-}
-
-.message.error {
-  background: #f5e7e4;
-  color: var(--danger);
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 28px;
-}
-
 .actions {
   display: flex;
   gap: 12px;
-  margin-top: 20px;
+  margin-top: 4px;
 }
 
 .actions button {
   flex: 1;
   padding: 12px;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid var(--border);
   font-size: 15px;
   cursor: pointer;
@@ -192,12 +345,41 @@ h1 {
 }
 
 .actions button.accept {
-  background: var(--accent);
-  color: var(--accent-contrast);
-  border-color: var(--accent);
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.actions button.accept:hover {
+  background: var(--navy-deep);
 }
 
 .actions button.reject {
   color: var(--danger);
   border-color: var(--danger);
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--navy);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  margin-top: 14px;
+}
+
+/* Focus visibile per accessibilità da tastiera */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--navy);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }

@@ -1,8 +1,9 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { generateUpcomingSlots } from "../../lib/slots";
+import Header from "../components/Header";
 
 export default function RespondPage() {
   return (
@@ -113,27 +114,35 @@ function RespondContent() {
 
   if (!token) {
     return (
-      <main>
-        <div className="card">Link non valido: manca il token della proposta.</div>
-      </main>
+      <>
+        <Header />
+        <main>
+          <div className="card">Link non valido: manca il token della proposta.</div>
+        </main>
+      </>
     );
   }
 
   if (view === "loading") {
     return (
-      <main>
-        <p>Caricamento...</p>
-      </main>
+      <>
+        <Header />
+        <main>
+          <p>Caricamento...</p>
+        </main>
+      </>
     );
   }
 
   return (
-    <main>
-      <h1>Gestisci la proposta</h1>
-      <p className="subtitle">
-        Accetta per confermare lo slot, rifiuta per liberarlo, oppure proponi
-        un altro orario: la richiesta passerà all'altra parte.
-      </p>
+    <>
+      <Header />
+      <main>
+        <h1>Gestisci la proposta</h1>
+        <p className="subtitle">
+          Accetta per confermare lo slot, rifiuta per liberarlo, oppure proponi
+          un altro orario: la richiesta passerà all'altra parte.
+        </p>
 
       {booking && (
         <div className="info-box">
@@ -241,6 +250,7 @@ function RespondContent() {
 
         {view === "error" && <div className="message error">{result}</div>}
       </div>
-    </main>
+      </main>
+    </>
   );
 }

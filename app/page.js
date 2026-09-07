@@ -2,8 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useMemo, useState } from "react";
-import { generateUpcomingSlots } from "../../lib/slots";
-
+import { generateUpcomingSlots } from "../lib/slots";
 export default function RespondPage() {
   return (
     <Suspense

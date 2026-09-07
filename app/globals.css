@@ -33,9 +33,20 @@ body {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 20px 32px;
+  padding: 18px 32px;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    padding: 16px 20px;
+    gap: 10px;
+  }
+
+  .site-logo {
+    height: 28px;
+  }
 }
 
 .site-logo {
@@ -68,6 +79,16 @@ main {
   padding: 40px 24px 80px;
 }
 
+@media (max-width: 640px) {
+  main {
+    padding: 28px 16px 60px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+}
+
 h1 {
   font-size: 26px;
   font-weight: 650;
@@ -86,14 +107,33 @@ h1 {
 
 .booking-layout {
   display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  gap: 28px;
+  grid-template-columns: 1fr 1.6fr;
+  gap: 24px;
   align-items: start;
+}
+
+.summary-panel {
+  order: 1;
+}
+
+.panel:not(.summary-panel) {
+  order: 2;
 }
 
 @media (max-width: 780px) {
   .booking-layout {
     grid-template-columns: 1fr;
+  }
+
+  /* Su mobile il calendario viene prima del riepilogo: si sceglie
+     lo slot e poi si compilano i dati. */
+  .panel:not(.summary-panel) {
+    order: 1;
+  }
+
+  .summary-panel {
+    order: 2;
+    position: static;
   }
 }
 
@@ -119,68 +159,55 @@ h1 {
   margin-bottom: 20px;
 }
 
-.day-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
-  margin-bottom: 8px;
-  text-transform: capitalize;
-}
+/* Navigazione giorno con frecce avanti/indietro */
 
-.day-block .slot-grid {
-  grid-template-columns: repeat(4, 1fr);
-}
-
-/* Selettore giorni: fila di pillole orizzontali */
-
-.day-selector {
+.day-nav {
   display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 20px;
-  scrollbar-width: thin;
-}
-
-.day-pill {
-  flex: 0 0 auto;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: 10px 16px;
-  border-radius: var(--radius);
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.day-nav-arrow {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   border: 1px solid var(--border);
   background: var(--surface);
+  color: var(--navy);
+  font-size: 18px;
+  line-height: 1;
   cursor: pointer;
-  color: var(--text);
-  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.day-pill .day-name {
-  color: var(--text-muted);
-  font-size: 11px;
-}
-
-.day-pill.active {
-  background: var(--navy);
+.day-nav-arrow:hover:not(:disabled) {
   border-color: var(--navy);
-  color: #fff;
+  background: var(--navy-wash);
 }
 
-.day-pill.active .day-name {
-  color: rgba(255, 255, 255, 0.75);
+.day-nav-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
-.day-pill:hover:not(.active) {
-  border-color: var(--navy);
+.day-nav-label {
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: capitalize;
+  text-align: center;
+  flex: 1;
 }
 
 /* Griglia orari */
 
 .slot-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
   gap: 10px;
 }
 

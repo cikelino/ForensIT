@@ -4,6 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { generateUpcomingSlots } from "../../lib/slots";
 import Header from "../components/Header";
+import DaySlotPicker from "../components/DaySlotPicker";
 
 export default function RespondPage() {
   return (
@@ -179,29 +180,12 @@ function RespondContent() {
 
         {view === "counter" && (
           <form onSubmit={submitCounter}>
-            {grouped.map((day) => (
-              <div className="day-block" key={day.label}>
-                <div className="day-label">{day.label}</div>
-                <div className="slot-grid">
-                  {day.slots.map((s) => {
-                    const occupied = isTaken(s.date, s.start);
-                    const isSelected =
-                      selected && selected.date === s.date && selected.start === s.start;
-                    return (
-                      <button
-                        type="button"
-                        key={`${s.date}-${s.start}`}
-                        disabled={occupied}
-                        className={`slot-btn${isSelected ? " selected" : ""}`}
-                        onClick={() => setSelected({ date: s.date, start: s.start })}
-                      >
-                        {s.start}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
+            <DaySlotPicker
+              grouped={grouped}
+              isTaken={isTaken}
+              selected={selected}
+              onSelect={setSelected}
+            />
 
             <div className="field">
               <label>Note (facoltativo)</label>

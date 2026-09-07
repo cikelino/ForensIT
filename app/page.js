@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 import { generateUpcomingSlots } from "../lib/slots";
 import Header from "./components/Header";
+import DaySlotPicker from "./components/DaySlotPicker";
 
 export default function Home() {
   const allSlots = useMemo(() => generateUpcomingSlots(14), []);
@@ -23,8 +24,6 @@ export default function Home() {
     }
     return Array.from(map.entries()).map(([date, v]) => ({ date, ...v }));
   }, [allSlots]);
-
-  const [activeDay, setActiveDay] = useState(0);
 
   useEffect(() => {
     fetch("/api/slots")
@@ -55,8 +54,6 @@ export default function Home() {
 
   const isTaken = (date, start) =>
     taken.some((b) => b.slot_date === date && b.slot_start.slice(0, 5) === start);
-
-  const currentDay = grouped[activeDay];
 
   const selectedLabel = useMemo(() => {
     if (!selected) return null;
@@ -115,48 +112,12 @@ export default function Home() {
           <div className="booking-layout">
             <div className="panel">
               <div className="panel-heading">Scegli giorno e orario</div>
-
-              <div className="day-selector">
-                {grouped.map((day, i) => {
-                  const [weekday, num, month] = day.label.split(" ");
-                  return (
-                    <button
-                      type="button"
-                      key={day.date}
-                      className={`day-pill${i === activeDay ? " active" : ""}`}
-                      onClick={() => setActiveDay(i)}
-                    >
-                      <span className="day-name">{weekday}</span>
-                      <span>
-                        {num} {month}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {currentDay && (
-                <div className="slot-grid">
-                  {currentDay.slots.map((s) => {
-                    const occupied = isTaken(s.date, s.start);
-                    const isSelected =
-                      selected &&
-                      selected.date === s.date &&
-                      selected.start === s.start;
-                    return (
-                      <button
-                        type="button"
-                        key={`${s.date}-${s.start}`}
-                        disabled={occupied}
-                        className={`slot-btn${isSelected ? " selected" : ""}`}
-                        onClick={() => setSelected({ date: s.date, start: s.start })}
-                      >
-                        {s.start}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+              <DaySlotPicker
+                grouped={grouped}
+                isTaken={isTaken}
+                selected={selected}
+                onSelect={setSelected}
+              />
             </div>
 
             <div className="panel summary-panel">

@@ -32,7 +32,7 @@ function optionLabel(booking) {
 function RespondContent() {
   const params = useSearchParams();
   const token = params.get("token");
-  const allSlots = useMemo(() => generateUpcomingSlots(14), []);
+  const allSlots = useMemo(() => generateUpcomingSlots(), []);
 
   const [booking, setBooking] = useState(null);
   const [siblings, setSiblings] = useState([]);

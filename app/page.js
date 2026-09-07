@@ -9,7 +9,7 @@ import DaySlotPicker from "./components/DaySlotPicker";
 const MAX_SLOTS = 3;
 
 export default function Home() {
-  const allSlots = useMemo(() => generateUpcomingSlots(14), []);
+  const allSlots = useMemo(() => generateUpcomingSlots(), []);
   const [taken, setTaken] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]); // [{date, start}, ...] fino a 3
   const [name, setName] = useState("");

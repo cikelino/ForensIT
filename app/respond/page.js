@@ -1,10 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { generateUpcomingSlots } from "../../lib/slots";
 
 export default function RespondPage() {
+  return (
+    <Suspense
+      fallback={
+        <main>
+          <p>Caricamento...</p>
+        </main>
+      }
+    >
+      <RespondContent />
+    </Suspense>
+  );
+}
+
+function RespondContent() {
   const params = useSearchParams();
   const token = params.get("token");
   const allSlots = useMemo(() => generateUpcomingSlots(14), []);

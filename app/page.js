@@ -149,7 +149,7 @@ export default function Home() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="m.rossi@gmail.com"
+                  placeholder="m.rossi@majorbit.com"
                   required
                 />
               </div>

@@ -32,11 +32,20 @@ export async function POST(request) {
   // Chi sta rispondendo ora diventa il nuovo proponente
   const newProposedBy = original.proposed_by === "admin" ? "colleague" : "admin";
 
-  // Libera lo slot precedente
-  await supabaseAdmin
-    .from("bookings")
-    .update({ status: "rejected", responded_at: new Date().toISOString() })
-    .eq("token", token);
+  // Libera la proposta precedente: se faceva parte di un gruppo di opzioni,
+  // le chiude tutte (da qui in poi la trattativa diventa a singolo slot).
+  if (original.group_id) {
+    await supabaseAdmin
+      .from("bookings")
+      .update({ status: "rejected", responded_at: new Date().toISOString() })
+      .eq("group_id", original.group_id)
+      .eq("status", "proposed");
+  } else {
+    await supabaseAdmin
+      .from("bookings")
+      .update({ status: "rejected", responded_at: new Date().toISOString() })
+      .eq("token", token);
+  }
 
   // Crea la nuova proposta
   const { data: created, error: insertError } = await supabaseAdmin

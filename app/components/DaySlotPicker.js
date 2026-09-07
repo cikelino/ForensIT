@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 
-// Selettore giorno/orario con navigazione a frecce: mostra un giorno alla
-// volta e la sua griglia di slot, per restare leggibile anche su schermi
-// stretti senza bisogno di scorrimento orizzontale.
-export default function DaySlotPicker({ grouped, isTaken, selected, onSelect }) {
+// Selettore giorno/orario con navigazione a frecce. isSelected e onSelect
+// sono forniti dal componente che lo usa, così può essere sia a scelta
+// singola (form "Riproponi") sia a scelta multipla fino a 3 (form principale).
+export default function DaySlotPicker({ grouped, isTaken, isSelected, onSelect }) {
   const [activeDay, setActiveDay] = useState(0);
   const currentDay = grouped[activeDay];
 
@@ -37,14 +37,13 @@ export default function DaySlotPicker({ grouped, isTaken, selected, onSelect }) 
         <div className="slot-grid">
           {currentDay.slots.map((s) => {
             const occupied = isTaken(s.date, s.start);
-            const isSelected =
-              selected && selected.date === s.date && selected.start === s.start;
+            const selected = isSelected(s.date, s.start);
             return (
               <button
                 type="button"
                 key={`${s.date}-${s.start}`}
                 disabled={occupied}
-                className={`slot-btn${isSelected ? " selected" : ""}`}
+                className={`slot-btn${selected ? " selected" : ""}`}
                 onClick={() => onSelect({ date: s.date, start: s.start })}
               >
                 {s.start}

@@ -6,10 +6,12 @@ import { generateUpcomingSlots } from "../lib/slots";
 import Header from "./components/Header";
 import DaySlotPicker from "./components/DaySlotPicker";
 
+const MAX_SLOTS = 3;
+
 export default function Home() {
   const allSlots = useMemo(() => generateUpcomingSlots(14), []);
   const [taken, setTaken] = useState([]);
-  const [selected, setSelected] = useState(null); // {date, start}
+  const [selectedSlots, setSelectedSlots] = useState([]); // [{date, start}, ...] fino a 3
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
@@ -55,15 +57,28 @@ export default function Home() {
   const isTaken = (date, start) =>
     taken.some((b) => b.slot_date === date && b.slot_start.slice(0, 5) === start);
 
-  const selectedLabel = useMemo(() => {
-    if (!selected) return null;
-    const day = grouped.find((d) => d.date === selected.date);
-    return day ? `${day.label} alle ${selected.start}` : null;
-  }, [selected, grouped]);
+  const isSelected = (date, start) =>
+    selectedSlots.some((s) => s.date === date && s.start === start);
+
+  function toggleSlot(slot) {
+    setSelectedSlots((prev) => {
+      const exists = prev.some((s) => s.date === slot.date && s.start === slot.start);
+      if (exists) return prev.filter((s) => !(s.date === slot.date && s.start === slot.start));
+      if (prev.length >= MAX_SLOTS) return prev;
+      return [...prev, slot];
+    });
+  }
+
+  const selectedLabels = useMemo(() => {
+    return selectedSlots.map((sel) => {
+      const day = grouped.find((d) => d.date === sel.date);
+      return day ? `${day.label} alle ${sel.start}` : `${sel.date} alle ${sel.start}`;
+    });
+  }, [selectedSlots, grouped]);
 
   async function handleSubmit(e) {
     e.preventDefault();
-    if (!selected || !name || !email) return;
+    if (selectedSlots.length === 0 || !name || !email) return;
 
     setSubmitting(true);
     setMessage(null);
@@ -74,9 +89,8 @@ export default function Home() {
       body: JSON.stringify({
         colleague_name: name,
         colleague_email: email,
-        slot_date: selected.date,
-        slot_start: selected.start,
         notes: notes || null,
+        slots: selectedSlots,
       }),
     });
     const data = await res.json();
@@ -87,11 +101,16 @@ export default function Home() {
       return;
     }
 
+    const failedNote =
+      data.failedCount > 0
+        ? ` (${data.failedCount} ${data.failedCount === 1 ? "opzione era" : "opzioni erano"} nel frattempo già occupate e non sono state incluse)`
+        : "";
+
     setMessage({
       type: "success",
-      text: "Proposta inviata. Riceverai una email di conferma appena verrà accettata.",
+      text: `Proposta inviata${failedNote}. Riceverai una email di conferma appena verrà accettata una delle opzioni.`,
     });
-    setSelected(null);
+    setSelectedSlots([]);
     setName("");
     setEmail("");
     setNotes("");
@@ -103,20 +122,23 @@ export default function Home() {
       <main>
         <h1>Prenota la migrazione del profilo</h1>
         <p className="subtitle">
-          Scegli un giorno e uno slot da 1 ora, dal lunedì al venerdì, tra le
-          9:00 e le 17:00. Riceverai una email di conferma una volta
-          accettata la proposta.
+          Scegli fino a 3 slot da 1 ora, dal lunedì al venerdì, tra le 9:00 e
+          le 17:00: chi gestisce le migrazioni sceglierà quella più comoda
+          tra le opzioni che proponi. Riceverai una email di conferma una
+          volta scelto uno degli orari.
         </p>
 
         <form onSubmit={handleSubmit}>
           <div className="booking-layout">
             <div className="panel">
-              <div className="panel-heading">Scegli giorno e orario</div>
+              <div className="panel-heading">
+                Scegli fino a {MAX_SLOTS} orari ({selectedSlots.length}/{MAX_SLOTS})
+              </div>
               <DaySlotPicker
                 grouped={grouped}
                 isTaken={isTaken}
-                selected={selected}
-                onSelect={setSelected}
+                isSelected={isSelected}
+                onSelect={toggleSlot}
               />
             </div>
 
@@ -124,10 +146,17 @@ export default function Home() {
               <div className="panel-heading">Riepilogo</div>
 
               <div className="selection-summary">
-                {selectedLabel ? (
+                {selectedLabels.length > 0 ? (
                   <>
-                    <strong>Slot selezionato</strong>
-                    {selectedLabel}
+                    <strong>
+                      {selectedLabels.length}{" "}
+                      {selectedLabels.length === 1 ? "orario selezionato" : "orari selezionati"}
+                    </strong>
+                    <ul style={{ margin: "6px 0 0", paddingLeft: 18 }}>
+                      {selectedLabels.map((l) => (
+                        <li key={l}>{l}</li>
+                      ))}
+                    </ul>
                   </>
                 ) : (
                   <span className="empty">Nessuno slot selezionato</span>
@@ -166,9 +195,13 @@ export default function Home() {
               <button
                 type="submit"
                 className="submit-btn"
-                disabled={!selected || !name || !email || submitting}
+                disabled={selectedSlots.length === 0 || !name || !email || submitting}
               >
-                {submitting ? "Invio in corso..." : "Proponi questo orario"}
+                {submitting
+                  ? "Invio in corso..."
+                  : selectedSlots.length > 1
+                  ? "Proponi questi orari"
+                  : "Proponi questo orario"}
               </button>
 
               {message && (
